@@ -6,79 +6,41 @@ This project implements a real-time video analytics system built on a private 5G
 
 The system leverages key 5G capabilities such as network slicing, edge computing (MEC), and local breakout via UPF to achieve low latency, improved security, and full data locality.
 
-A detailed technical report is included in this repository.
-
 ---
 
 ## System Architecture
 
-```mermaid
-flowchart LR
-    A[5G Camera UE] --> B[gNodeB]
-    B --> C[UPF Local Breakout]
-    C --> D[MEC Server]
-
-    D --> E[Video Decode]
-    E --> F[YOLO Detection]
-    F --> G[Tracking]
-    G --> H[Counting and Analytics]
-
-    H --> I[Dashboard and Monitoring]
-```
+![System Architecture](assets/system_architecture.png)
 
 ### Explanation
 
-The camera operates as a 5G user equipment and streams video over the uplink. The gNodeB forwards this data to the UPF, which performs local breakout and sends the stream directly to the MEC server.
+The 5G camera operates as user equipment and continuously streams video over the uplink. The gNodeB forwards this stream to the UPF, which performs local breakout and routes the data directly to the MEC server.
 
-All processing is done at the edge. Detection, tracking, and counting are executed sequentially, and results are sent to monitoring systems.
+At the MEC server, video is decoded and processed through detection, tracking, and counting stages. The final analytics output is delivered to the monitoring dashboard.
 
 ---
 
 ## 5G Network Design
 
-```mermaid
-flowchart LR
-    A[5G Camera] --> B[gNodeB]
-
-    B --> C1[eMBB Slice Video]
-    B --> C2[URLLC Slice Control]
-
-    C1 --> D[MEC Server]
-    C2 --> E[Alert System]
-
-    D --> F[Dashboard and Storage]
-```
+![5G Network Design](assets/network_design.png)
 
 ### Explanation
 
-Video data is transmitted over the eMBB slice, while control and alert signals are transmitted over the URLLC slice. This separation ensures that critical signals are not delayed by high-volume video traffic.
+The system uses network slicing to separate traffic. The eMBB slice carries high-bandwidth video data, while the URLLC slice handles latency-sensitive control signals.
 
-The UPF is deployed at the edge, enabling local breakout and ensuring that all data remains within the private network.
+Both streams are managed within the private 5G network and processed at the edge, ensuring reliable and low-latency operation.
 
 ---
 
 ## Machine Learning Pipeline
 
-```mermaid
-flowchart LR
-    A[RTSP Stream] --> B[Frame Decode]
-    B --> C[Frame Buffer]
-
-    C --> D[YOLO Detection]
-    D --> E[Bounding Boxes]
-
-    E --> F[Centroid Tracker]
-    F --> G[ID Assignment]
-
-    G --> H[Counting Logic]
-    H --> I[Output Counts and FPS]
-```
+![Machine Learning Pipeline](assets/ml_pipeline.png)
 
 ### Explanation
 
-The pipeline begins with RTSP stream ingestion and frame decoding. Frames are buffered to handle variations in timing. Detection is performed periodically to improve efficiency.
+The pipeline starts with RTSP stream ingestion followed by frame decoding and buffering. The YOLO model performs person detection, and detected objects are passed to a tracking module.
 
-Detected objects are tracked using a centroid-based tracker that assigns persistent IDs. This enables accurate counting of unique individuals and prevents duplicate counting.
+The tracking system assigns unique IDs to individuals, enabling accurate counting and preventing duplication. The final output includes counts and real-time performance metrics.
 
 ---
 
@@ -87,15 +49,15 @@ Detected objects are tracked using a centroid-based tracker that assigns persist
 * Real-time person detection using YOLO
 * Multi-object tracking with persistent IDs
 * Unique people counting
-* RTSP stream processing over 5G
-* Low-latency edge inference using MEC
+* RTSP video processing over 5G
+* Edge-based inference using MEC
 * Separation of video and control traffic
 
 ---
 
 ## Implementation Details
 
-* OpenCV for video ingestion
+* OpenCV for RTSP video ingestion
 * Ultralytics YOLO for detection
 * Custom centroid tracking algorithm
 * Frame skipping for performance optimization
@@ -106,44 +68,45 @@ Detected objects are tracked using a centroid-based tracker that assigns persist
 ## Hardware Setup
 
 * 5G SIM-enabled camera
-* Private 5G core with gNodeB and UPF
-* MEC server for ML inference
+* Private 5G core (gNodeB, UPF)
+* MEC server for running ML inference
 
 ---
 
 ## Results
 
-The system achieves stable real-time performance with consistent detection and counting. Edge processing ensures low latency and predictable behavior.
+The system achieves stable real-time performance with consistent detection and counting accuracy. Processing at the edge ensures low latency and predictable behavior compared to cloud-based systems.
 
 ---
 
 ## Comparison
 
-| Feature     | WiFi Systems | Cloud Systems | This System |
-| ----------- | ------------ | ------------- | ----------- |
-| Latency     | Variable     | High          | Low         |
-| Security    | Limited      | External      | SIM-based   |
-| Data        | Local        | Cloud         | Fully Local |
-| Reliability | Low          | Medium        | High        |
+| Feature       | WiFi Systems | Cloud Systems       | Proposed System |
+| ------------- | ------------ | ------------------- | --------------- |
+| Latency       | Variable     | High                | Low             |
+| Security      | Limited      | External dependency | SIM-based       |
+| Data Location | Local        | Cloud               | Fully Local     |
+| Reliability   | Low          | Medium              | High            |
 
 ---
 
 ## Applications
 
 * Smart campus monitoring
-* Industrial safety
+* Industrial safety and surveillance
 * Occupancy tracking
-* Edge AI research
+* Edge AI and 5G research
 
 ---
 
 ## Future Work
 
-* Multi-camera system
-* Behavior analysis
-* Alert system
-* Adaptive QoS
-* Hardware acceleration
+* Multi-camera integration
+* Behavior analysis and anomaly detection
+* Real-time alert systems
+* Adaptive QoS using analytics feedback
+* Hardware acceleration (GPU/FPGA)
 
 ---
+
 
